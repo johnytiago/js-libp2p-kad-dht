@@ -136,6 +136,11 @@ class KadDHT extends EventEmitter {
     this.randomWalkTimeout = parseInt(options.randomWalk.timeout)
   }
 
+  mountStartrail (startrail) {
+    console.log('KAD DHT Startrail mounted')
+    this.startrail = startrail
+  }
+
   /**
    * Is this DHT running.
    *

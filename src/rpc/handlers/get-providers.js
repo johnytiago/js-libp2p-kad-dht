@@ -42,7 +42,18 @@ module.exports = (dht) => {
         cb(null, exists)
       }),
       (cb) => dht.providers.getProviders(cid, cb),
-      (cb) => dht._betterPeersToQuery(msg, peer, cb)
+      (cb) => dht._betterPeersToQuery(msg, peer, cb),
+      (cb) => { 
+        if (dht.startrail)
+          return dht.startrail.process({ cid, peer }, (err) => {
+            if (err) console.error(err);
+
+            // not handling errors for now
+            cb()
+          })
+
+        return cb(null)
+      },
     ], (err, res) => {
       if (err) {
         return callback(err)
