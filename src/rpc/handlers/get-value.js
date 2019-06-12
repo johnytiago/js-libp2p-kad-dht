@@ -20,7 +20,6 @@ module.exports = (dht) => {
    * @returns {undefined}
    */
   return function getValue (peer, msg, callback) {
-
     const key = msg.key
 
     log('key: %b', key)
