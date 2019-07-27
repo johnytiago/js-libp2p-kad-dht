@@ -41,27 +41,24 @@ module.exports = (dht) => {
 
         cb(null, exists)
       }),
-      (cb) => dht.providers.getProviders(cid, cb),
-      (cb) => dht._betterPeersToQuery(msg, peer, cb),
       (cb) => {
-        if (dht.startrail) {
-          return dht.startrail.process({ cid, peer }, (err) => {
-            if (err) log.error(err)
+        if (!dht.startrail) return cb();
 
-            // not handling errors for now
-            cb()
-          })
-        }
+        dht.startrail.process({ cid, peer }, (err, cached) => {
+          if (err) log.error(err)
 
-        return cb(null)
-      }
+          cb(null, cached)
+        })
+      },
+      (cb) => dht.providers.getProviders(cid, cb),
+      (cb) => dht._betterPeersToQuery(msg, peer, cb)
     ], (err, res) => {
       if (err) {
         return callback(err)
       }
-      const has = res[0]
-      const closer = res[2]
-      const providers = res[1].map((p) => {
+      const has = res[0] || res[1]
+      const closer = res[3]
+      const providers = res[2].map((p) => {
         if (dht.peerBook.has(p)) {
           return dht.peerBook.get(p)
         }

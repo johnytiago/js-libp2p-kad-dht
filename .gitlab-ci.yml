@@ -1,0 +1,33 @@
+stages:
+  - test
+  - release
+
+variables:
+  IPFS_REPO_PATH: ${CI_API_V4_URL}/projects/${CI_PROJECT_NAMESPACE}%2Fjs-ipfs
+
+test:
+  stage: test
+  image: node:11-alpine
+  tags:
+    - docker
+  before_script:
+    - apk update && apk upgrade && apk add --no-cache git python make g++
+  script:
+    - npm i
+    - npm run test:node
+
+trigger-ipfs-build:
+  stage: release
+  image: appropriate/curl:latest
+  tags:
+    - docker
+  variables:
+    # Disable git usage
+    GIT_STRATEGY: none
+  script:
+    - curl --request POST
+      --form "token=${CI_JOB_TOKEN}"
+      --form ref=master
+      ${IPFS_REPO_PATH}/trigger/pipeline
+  only:
+  - master
