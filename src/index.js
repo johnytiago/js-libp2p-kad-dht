@@ -137,7 +137,6 @@ class KadDHT extends EventEmitter {
   }
 
   mountStartrail (startrail) {
-    console.log('KAD DHT Startrail mounted')
     this.startrail = startrail
   }
 
